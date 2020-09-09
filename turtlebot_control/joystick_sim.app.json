@@ -37,11 +37,6 @@
     ]
   },
   "config": {
-    "virtual_gamepad_bridge": {
-      "VirtualGamepadBridge": {
-        "tick_period": "100ms"
-      }
-    },
     "interface": {
       "input": {
         "port": 55001,

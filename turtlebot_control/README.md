@@ -66,3 +66,13 @@ To control the robot from Isaac, a REB component is needed. DifferentialBase is 
 * Control the TurtleBot with a joystick or go to `localhost:3000` to use a virtual gamepad (If using joystick, L1 has to be hold while controlling).
 
 ![alt text](img/turtlebot_joystick.gif "Turtlebot Joystick")
+
+## Code explain
+The application file [joystick_sim.app.json](joystick_sim.app.json) contains two part:
+* `differential_base_commander` from Isaac GEMs navigation stack. It contains everything from joystick, virtual gamepad and calcuation for joystick status to control command. The source code can be found at `~/isaac/packages/navigation`.
+* An interface node to communicate with Isaac Sim at default port 55000 and 55001.
+
+## Other files
+Under [URDF](urdf) folder, the original converted URDF file and the modified URDF file for TurtleBot can be found.
+
+Under [USD](usd) folder, the USD file for turtlebot and the running stage can be found.
