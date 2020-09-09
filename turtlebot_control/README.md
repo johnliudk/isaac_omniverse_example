@@ -61,6 +61,8 @@ To control the robot from Isaac, a REB component is needed. DifferentialBase is 
 * Add TurtleBot by draging <em>omni:/Isaac/Robots/TurtleBot/turtlebot3_burger_REB.usd</em> into the stage.
 * Under <em>Stage</em> tab, select <em>turtlebot3_burger_REB</em>. Under <em>Details</em>, set <em>Positon</em> to `0 0 5`. Under <em>PhysX Properties</em>, untick <em>fixBase</em>.
 * Start Robot Engine Bridge <em>Robot Engine Bridge->Create Application</em>.
-* Click <em>Play<em>.
+* Click <em>Play</em>.
 * Start a terminal under `~/isaac` and start the control app `bazel run apps/isaac_omniverse_example/turtlebot_control/joystick_sim`.
-* Control the TurtleBot with a joystick or go to `localhost:3000` to use a virtual gamepad.
+* Control the TurtleBot with a joystick or go to `localhost:3000` to use a virtual gamepad (If using joystick, L1 has to be hold while controlling).
+
+![alt text](img/turtlebot_joystick.gif "Turtlebot Joystick")
