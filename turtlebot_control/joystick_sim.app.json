@@ -1,0 +1,56 @@
+{
+  "name": "joystick_sim",
+  "modules": ["navigation", "viewers"],
+  "graph": {
+    "nodes": [
+      {
+        "name": "commander",
+        "subgraph": "packages/navigation/apps/differential_base_commander.subgraph.json"
+      },
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "commander.subgraph/interface/command",
+        "target": "interface/input/base_command"
+      }
+    ]
+  },
+  "config": {
+    "virtual_gamepad_bridge": {
+      "VirtualGamepadBridge": {
+        "tick_period": "100ms"
+      }
+    },
+    "interface": {
+      "input": {
+        "port": 55001,
+        "host": "localhost"
+      },
+      "output": {
+        "port": 55000,
+        "host": "localhost"
+      }
+    }
+  }
+}
