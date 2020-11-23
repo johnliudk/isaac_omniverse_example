@@ -4,9 +4,12 @@
 - [Isaac SDK](#isaac-sdk)
   - [Natively](#natively)
   - [Docker](#docker)
-- [Omniverse Isaac Sim](#omniverse-isaac-sim)
+- [Nucleus Server](#nucleus-server)
   - [Natively](#natively-1)
-  - [Docker (Headless)](#docker-headless)
+  - [Docker](#docker-1)
+- [Omniverse Isaac Sim](#omniverse-isaac-sim)
+  - [Natively](#natively-2)
+  - [Docker (headless)](#docker-headless)
 
 ## Docker and NVIDIA Container Toolkit
 Follow the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) of NVIDIA Container Toolkit to install both Docker-CE and NVIDIA Container Toolkit.
@@ -44,14 +47,57 @@ bazel build ...
 docker start -ai isaac
 ```
 
-## Omniverse Isaac Sim
-Omniverse Isaac Sim can run either natively or in a docker, as it requires powerful GPUs for rendering, a remote server may be a better choice.
+## Nucleus Server
+Nucles stores digital assets and virtual worlds for various Omniverse client applications. Clients can publish modication or subscribe to the changes of the assets in real time. To learn more, visit [Nucles documentation](https://docs.omniverse.nvidia.com/prod_nucleus/prod_nucleus/overview.html).
 
 ### Natively
-To run Omniverse Isaac Sim in local environment natively with Nucleus Deployment, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#local-workstation-deployment) in Omniverse Isaac Sim documentation.
+To install Nucleus Server in Linux, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#nucleus-installation) in Omniverse documentation.
 
-### Docker (Headless)
-Note that each Omniverse Kit instance can only connect to one Omniverse Kit Remote Client. By default, the window size is 1280x720.
+### Docker
+Note that additional access is needed for NGC Omniverse Containers. Contact your NVIDIA's point person to have the access enabled.
+
+* Login into NGC
+```bash
+docker login nvcr.io
+```
+
+* Install [docker-compose](https://docs.docker.com/compose/install/).
+
+* Download and extract the Nucleus Core compose files from [Nucleus](https://docs.omniverse.nvidia.com/prod_nucleus/prod_nucleus/docker/index.html).
+
+* Read `nucleus-stack.env` **CAREFULLY** to set correct environment variables.
+  * Set correct host IP `EXTERNAL_IP_OR_HOST`.
+  * Set a name for the instance `INSTANCE_NAME`.
+  * Set password for superuser.
+  * Set the desired data storage location `DATA_ROOT`.
+  * Check port and container subnet has no conflicts with the host system.
+
+* Generate secert set (**INSECURE**)
+```bash
+./generate-sample-insecure-secrets.sh
+```
+
+* Start the server with docker-compose to test everything works
+```bash
+docker-compose --env-file <.env file path> -f <.yml file path> up
+
+# Add -d option to ‘daemonize’ stack
+```
+
+* Errors on Startup:
+  * Give it some time to let docker restart containers to meet all dependencies
+  * Check firewall status
+
+* Follow [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#adding-samples-assets) to add sample assets to Nucleus Server.
+
+## Omniverse Isaac Sim
+Omniverse Isaac Sim can run either natively or in a docker. It requires RTX-enabled GPUs for the best rendering.
+
+### Natively
+To run Omniverse Isaac Sim in local environment natively, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#local-workstation-deployment) in Omniverse Isaac Sim documentation. Running natively is recommended at current stage.
+
+### Docker (headless)
+Note that the docker verison is in **Early Access**. Each Omniverse Kit instance can only connect to one Omniverse Kit Remote Client. By default, the window size is 1280x720.
 
 * Login into NGC
 ```bash
@@ -71,6 +117,9 @@ sudo apt-get install libavcodec57 libavformat57 libavutil55 libsdl2-dev libsdl2-
 * Access Omniverse Kit instance
 ```bash
 ./omniverse-kit-remote.sh -s <remote_ip_address>
+
+# to get all options
+./omniverse-kit-remote.sh --help
 ```
 
 * Start and stop a instance
