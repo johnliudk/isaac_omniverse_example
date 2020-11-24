@@ -24,6 +24,6 @@ Isaac Sim is part of the Omniverse Robotics Experience.
 * [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker)
 
 ## Usage
-* Setup the environment following the guide in [0_steup](0_setup/READE.md).
+* Setup the environment following the guide in [0_steup](0_setup/README.md).
 * Follow the document of Isaac SDK and Isaac Sim for setup and basic understanding of the tools.
 * Clone this repository to the `app` folder under Isaac SDK, by default `~/isaac/apps`. Follow the guide in each sub folders.
