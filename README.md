@@ -21,7 +21,7 @@ Isaac Sim is part of the Omniverse Robotics Experience.
 ## Requirements
 
 - [Isaac SDK 2020.2](https://developer.nvidia.com/isaac/downloads)
-- [Isaac Sim 2020.2 (Omniverse Early Access)](https://developer.nvidia.com/isaac-sim/download)
+- [Isaac Sim 2020.2.2 (Omniverse Early Access)](https://developer.nvidia.com/isaac-sim/download)
 - [ROS Melodic](http://wiki.ros.org/melodic) (optional)
 - [Docker-CE](https://docs.docker.com/engine/install/ubuntu/)
 - [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker)

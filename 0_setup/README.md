@@ -4,12 +4,15 @@
 - [Isaac SDK](#isaac-sdk)
   - [Natively](#natively)
   - [Docker](#docker)
-- [Nucleus Server](#nucleus-server)
+- [Nucleus Core](#nucleus-core)
   - [Natively](#natively-1)
   - [Docker](#docker-1)
 - [Omniverse Isaac Sim](#omniverse-isaac-sim)
   - [Natively](#natively-2)
-  - [Docker (headless)](#docker-headless)
+  - [Docker](#docker-2)
+    - [Run in windowed mode](#run-in-windowed-mode)
+    - [Run in headless mode](#run-in-headless-mode)
+- [Common Docker Network](#common-docker-network)
 
 ## Docker and NVIDIA Container Toolkit
 
@@ -41,7 +44,13 @@ docker volume create isaac-sdk-build-cache
 - Create and start the container
 
 ```bash
-docker run --mount source=isaac-sdk-build-cache,target=/root -v `pwd`:/src/workspace -w /src/workspace/sdk -p 8888:8888 -p 3000:3000 --gpus all -it --name isaac isaacbuild:latest /bin/bash
+docker run -it \
+    --mount source=isaac-sdk-build-cache,target=/root \
+    -v $(pwd):/src/workspace \
+    -w /src/workspace/sdk \
+    --gpus all \
+    --name isaac_sdk \
+    isaacbuild:latest /bin/bash
 ```
 
 - Build all Isaac SDK examples inside container (optional)
@@ -53,16 +62,16 @@ bazel build ...
 - Access the stopped container
 
 ```bash
-docker start -ai isaac
+docker start -ai isaac_sdk
 ```
 
-## Nucleus Server
+## Nucleus Core
 
-Nucleus stores digital assets and virtual worlds for various Omniverse client applications. Clients can publish modification or subscribe to the changes of the assets in real time. To learn more, visit [Nucleus documentation](https://docs.omniverse.nvidia.com/prod_nucleus/prod_nucleus/overview.html).
+Nucleus stores digital assets and virtual worlds for various Omniverse client applications. Clients can publish modification or subscribe to the changes of the assets in real time. To learn more, visit [Nucleus documentation](https://docs.omniverse.nvidia.com/prod_nucleus/prod_nucleus/overview/description.html).
 
 ### Natively
 
-To install Nucleus Server in Linux, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#nucleus-installation) in Omniverse documentation.
+To install Nucleus Server in Linux, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#isaac-sim-setup-nucleus-installation-linux) in Omniverse documentation.
 
 ### Docker
 
@@ -76,7 +85,7 @@ docker login nvcr.io
 
 - Install [docker-compose](https://docs.docker.com/compose/install/).
 
-- Download and extract the Nucleus Core compose files from [Nucleus](https://docs.omniverse.nvidia.com/prod_nucleus/prod_nucleus/docker/index.html).
+- Download and extract the Nucleus Core compose files from [Nucleus](https://docs.omniverse.nvidia.com/prod_nucleus/prod_nucleus/installation/docker.html#nucleus-core).
 
 - Read `nucleus-stack.env` **CAREFULLY** to set correct environment variables.
 
@@ -84,7 +93,7 @@ docker login nvcr.io
   - Set a name for the instance `INSTANCE_NAME`.
   - Set password for superuser.
   - Set the desired data storage location `DATA_ROOT`.
-  - Check port and container subnet has no conflicts with the host system.
+  - Check port and container subnet has no conflicts with the host system, such as `WEB_PORT`.
 
 - Generate secret set (**INSECURE**)
 
@@ -113,11 +122,11 @@ Omniverse Isaac Sim can run either natively or in a docker. It requires RTX-enab
 
 ### Natively
 
-To run Omniverse Isaac Sim in local environment natively, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#local-workstation-deployment) in Omniverse Isaac Sim documentation. Running natively is recommended at current stage.
+To run Omniverse Isaac Sim in local environment natively, follow the [guide](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/setup.html#running-natively) in Omniverse Isaac Sim documentation. Running natively is recommended at current stage.
 
-### Docker (headless)
+### Docker
 
-Note that the docker version is in **Early Access**. Each Omniverse Kit instance can only connect to one Omniverse Kit Remote Client. By default, the window size is 1280x720.
+Note that the docker version is in **Early Access**.
 
 - Login into NGC
 
@@ -125,10 +134,43 @@ Note that the docker version is in **Early Access**. Each Omniverse Kit instance
 docker login nvcr.io
 ```
 
+#### Run in windowed mode
+
+```bash
+xhost +local:
+
+docker run --rm \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v /etc/localtime:/etc/localtime:ro \
+    -e DISPLAY=unix${DISPLAY} \
+    -e "ACCEPT_EULA=Y" \
+    -e "OMNI_USER=<username>" \
+    -e "OMNI_PASS=<userpass>" \
+    -e "OMNI_SERVER=<ip_address>" \
+    --gpus all \
+    --network=host \
+    --entrypoint ./runapp.sh \
+    --name isaac_sim \
+    nvcr.io/nvidia/isaac-sim:2020.2.2_ea
+```
+
+#### Run in headless mode
+
 - Create and start the container
 
 ```bash
-docker run --gpus all -e "ACCEPT_EULA=Y" -p 47995-48012:47995-48012/udp -p 47995-48012:47995-48012/tcp -p 49000-49007:49000-49007/tcp -p 49000-49007:49000-49007/udp -p 55000-55001:55000-55001 --name omniverse nvcr.io/nvidia/isaac-sim:2020.2_ea
+docker run --rm \
+    -e "ACCEPT_EULA=Y" \
+    -e "OMNI_USER=<username>" \
+    -e "OMNI_PASS=<userpass>" \
+    -e "OMNI_SERVER=<ip_address>" \
+    -p 47995-48012:47995-48012/udp \
+    -p 47995-48012:47995-48012/tcp \
+    -p 49000-49007:49000-49007/tcp \
+    -p 49000-49007:49000-49007/udp \
+    --gpus all \
+    --name isaac_sim \
+    nvcr.io/nvidia/isaac-sim:2020.2.2_ea
 ```
 
 - Download Omniverse Kit Remote Clients on client machine from [Isaac Sim 2020.2 (Omniverse Early Access)](https://developer.nvidia.com/isaac-sim/download) and install required packages:
@@ -146,9 +188,19 @@ sudo apt-get install libavcodec57 libavformat57 libavutil55 libsdl2-dev libsdl2-
 ./omniverse-kit-remote.sh --help
 ```
 
-- Start and stop a instance
+## Common Docker Network
+
+If containers like `isaac_sdk` and `isaac_sim` is running on the same machine, a common network can be created for easy inter-container communication.
+
+- Create network
 
 ```bash
-docker start omniverse
-docker stop omniverse
+docker network create -d bridge isaac
+```
+
+- Attach at creation: set `--network=isaac`
+- Attach existing container
+
+```bash
+docker network connect isaac CONTAINER_NAME
 ```
