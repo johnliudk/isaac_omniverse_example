@@ -1,6 +1,7 @@
-docker run -it \
+docker run -it --rm \
     --mount source=isaac-sdk-build-cache,target=/root \
     -v $(pwd):/src/workspace \
+    -v PATH_TO_CONFIG:/src/jupyter_notebook_config.py  \
     -w /src/workspace/sdk \
     --gpus all \
     --name isaac_sdk \

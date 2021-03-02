@@ -41,28 +41,25 @@ cd isaac
 docker volume create isaac-sdk-build-cache
 ```
 
-- Create and start the container
+- Create and start the container. Note to attach the [notebook config file](../template/jupyter_notebook_config.py) to allow root user and remote access when running the first time.
 
 ```bash
-docker run -it \
+docker run -it --rm \
     --mount source=isaac-sdk-build-cache,target=/root \
     -v $(pwd):/src/workspace \
+    -v PATH_TO_CONFIG:/src/jupyter_notebook_config.py \
     -w /src/workspace/sdk \
     --gpus all \
     --name isaac_sdk \
     isaacbuild:latest /bin/bash
+
+cp /src/jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
 ```
 
 - Build all Isaac SDK examples inside container (optional)
 
 ```bash
 bazel build ...
-```
-
-- Access the stopped container
-
-```bash
-docker start -ai isaac_sdk
 ```
 
 ## Nucleus Core
@@ -101,12 +98,10 @@ docker login nvcr.io
 ./generate-sample-insecure-secrets.sh
 ```
 
-- Start the server with docker-compose to test everything works
+- Start the server with docker-compose
 
 ```bash
-docker-compose --env-file <.env file path> -f <.yml file path> up
-
-# Add -d option to ‘daemonize’ stack
+docker-compose --env-file nucleus-stack.env -f nucleus-stack.yml up -d
 ```
 
 - Errors on Startup:
