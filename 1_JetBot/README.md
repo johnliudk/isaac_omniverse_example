@@ -3,7 +3,7 @@
 - [About JetBot](#about-jetbot)
 - [Remote control in simulator](#remote-control-in-simulator)
   - [Start Isaac SDK app](#start-isaac-sdk-app)
-  - [Start Simulation](#start-simulation)
+  - [Start Isaac Sim](#start-isaac-sim)
   - [Control JetBot](#control-jetbot)
 
 ## About JetBot
@@ -25,15 +25,15 @@ JetBot is the perfect platform to learn robotics with Isaac SDK and Omniverse Is
 bazel run apps/jetbot:jetbot_jupyter_notebook
 ```
 
-- Edit `simulation_tcp.subgraph.json` to set the correct host for `TcpSubscriber`
+- Edit `simulation_tcp.subgraph.json` to set the correct host for `TcpSubscriber`, e.g., `isaac_sim`.
 
 - Run `Remote control Jetbot using Virtual gamepad` section in `jetbot_notebook` to block `app.start()`
 
-### Start Simulation
+### Start Isaac Sim
 
 - Open `omni:/Isaac/Samples/Isaac_SDK/Robots/Jetbot_REB.usd` in Isaac Sim
 
-- Edit `_build/linux-x86_64/release/exts/omni.isaac.robot_engine_bridge/resources/isaac_engine/json/isaacsim.app.json` to set the correct host for `TcpSubscriber`
+- Edit `_build/linux-x86_64/release/exts/omni.isaac.robot_engine_bridge/resources/isaac_engine/json/isaacsim.app.json` to set the correct host for `TcpSubscriber`, e.g., `isaac_sdk`.
 
 - Create Robot Engine Bridge application
 

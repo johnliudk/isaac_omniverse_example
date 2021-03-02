@@ -12,7 +12,7 @@
   - [Docker](#docker-2)
     - [Run in windowed mode](#run-in-windowed-mode)
     - [Run in headless mode](#run-in-headless-mode)
-- [Common Docker Network](#common-docker-network)
+- [Docker Network (Optional)](#docker-network-optional)
 
 ## Docker and NVIDIA Container Toolkit
 
@@ -183,9 +183,9 @@ sudo apt-get install libavcodec57 libavformat57 libavutil55 libsdl2-dev libsdl2-
 ./omniverse-kit-remote.sh --help
 ```
 
-## Common Docker Network
+## Docker Network (Optional)
 
-If containers like `isaac_sdk` and `isaac_sim` is running on the same machine, a common network can be created for easy inter-container communication.
+If containers like `isaac_sdk` and `isaac_sim` is running on the same machine, a dedicate docker network can be created for easy inter-container communication.
 
 - Create network
 
