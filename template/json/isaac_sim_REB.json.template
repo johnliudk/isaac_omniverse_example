@@ -1,0 +1,43 @@
+{
+  "name": "isaacsim",
+  "modules": [
+    "engine_tcp_udp"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      }
+    ],
+    "edges": []
+  },
+  "config": {
+    "interface": {
+      "input": {
+        "port": 55001,
+        "host": "localhost"
+      },
+      "output": {
+        "port": 55000
+      }
+    }
+  }
+}
