@@ -12,6 +12,11 @@
   - [Docker](#docker-2)
     - [Run in windowed mode](#run-in-windowed-mode)
     - [Run in headless mode](#run-in-headless-mode)
+    - [Run in interactive mode](#run-in-interactive-mode)
+  - [With python package](#with-python-package)
+    - [Finish setup](#finish-setup)
+    - [Quick fix for `--allow-root` bug](#quick-fix-for---allow-root-bug)
+    - [Test the python environment](#test-the-python-environment)
 - [Docker Network (Optional)](#docker-network-optional)
 
 ## Docker and NVIDIA Container Toolkit
@@ -181,6 +186,72 @@ sudo apt-get install libavcodec57 libavformat57 libavutil55 libsdl2-dev libsdl2-
 
 # to get all options
 ./omniverse-kit-remote.sh --help
+```
+
+#### Run in interactive mode
+
+Change the entrypoint to bash to allow interactive use.
+
+```bash
+docker run --rm -it \
+    -e "ACCEPT_EULA=Y" \
+    -e "OMNI_USER=<username>" \
+    -e "OMNI_PASS=<userpass>" \
+    -e "OMNI_SERVER=<ip_address>" \
+    -p 47995-48012:47995-48012/udp \
+    -p 47995-48012:47995-48012/tcp \
+    -p 49000-49007:49000-49007/tcp \
+    -p 49000-49007:49000-49007/udp \
+    --gpus all \
+    --entrypoint bash \
+    --name isaac_sim \
+    nvcr.io/nvidia/isaac-sim:2020.2.2_ea
+```
+
+### With python package
+
+Python environment is needed to perform tasks like reinforcement learning, for details and native installation, please refer to official [documentation](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/python_samples.html). For docker, please use the [Dockerfile](Dockerfile) to build the image.
+
+```bash
+docker build -t isaac-sim-rl:2020.2.2_ea .
+```
+
+Start an interactive container.
+
+```bash
+docker run --rm -it \
+    -e "ACCEPT_EULA=Y" \
+    -e "OMNI_USER=<username>" \
+    -e "OMNI_PASS=<userpass>" \
+    -e "OMNI_SERVER=<ip_address>" \
+    -p 47995-48012:47995-48012/udp \
+    -p 47995-48012:47995-48012/tcp \
+    -p 49000-49007:49000-49007/tcp \
+    -p 49000-49007:49000-49007/udp \
+    --gpus all \
+    --name isaac_sim_rl \
+    isaac-sim-rl:2020.2.2_ea
+```
+
+#### Finish setup
+
+In the container:
+
+- Edit `experiences/isaac-sim-python.json` to set correct nucleus server
+- Use `source setenv.sh` to setup environment variables.
+
+#### Quick fix for `--allow-root` bug
+
+In the container, the default user is root, and calling Omniverse Sim with root user requires `--allow-root` flag. In the current build, the function to add is flag is missing.
+
+For a quick fix, edit file `/isaac-sim/_build/linux-x86_64/release/exts/omni.isaac.synthetic_utils/omni/isaac/synthetic_utils/scripts/omnikit.py`. In line 126, function `_start_app`, append the `args` variable with `'--allow-root'`
+
+#### Test the python environment
+
+Run with simple sample to test if python package is working.
+
+```bash
+python3 simple/time_stepping.py
 ```
 
 ## Docker Network (Optional)
