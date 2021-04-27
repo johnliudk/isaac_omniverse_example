@@ -1,0 +1,3 @@
+[submodule "0_Setup/patch/jetbot"]
+	path = 0_Setup/patch/jetbot
+	url = https://github.com/hailoclu/jetbot.git

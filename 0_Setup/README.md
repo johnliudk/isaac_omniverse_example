@@ -13,9 +13,7 @@
     - [Run in windowed mode](#run-in-windowed-mode)
     - [Run in headless mode](#run-in-headless-mode)
     - [Run in interactive mode](#run-in-interactive-mode)
-  - [With python package](#with-python-package)
-    - [Finish setup](#finish-setup)
-    - [Quick fix for `--allow-root` bug](#quick-fix-for---allow-root-bug)
+  - [Docker with python package](#docker-with-python-package)
     - [Test the python environment](#test-the-python-environment)
 - [Docker Network (Optional)](#docker-network-optional)
 
@@ -208,13 +206,21 @@ docker run --rm -it \
     nvcr.io/nvidia/isaac-sim:2020.2.2_ea
 ```
 
-### With python package
+### Docker with python package
 
 Python environment is needed to perform tasks like reinforcement learning, for details and native installation, please refer to official [documentation](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/python_samples.html). For docker, please use the [Dockerfile](Dockerfile) to build the image.
 
 ```bash
 docker build -t isaac-sim-rl:2020.2.2_ea .
 ```
+
+> **Note**
+>
+> In the Dockerfile, several patches have been applied to resolve some known issues with current build.
+>
+> - Patch mentioned in https://developer.nvidia.com/blog/training-your-jetbot-in-isaac-sim/ for JetBot training.
+> - Patch `omnikit.py` to allow root user starting the kit in the container.
+> - Entrypoint with automatically environment variables setup.
 
 Start an interactive container.
 
@@ -228,23 +234,11 @@ docker run --rm -it \
     -p 47995-48012:47995-48012/tcp \
     -p 49000-49007:49000-49007/tcp \
     -p 49000-49007:49000-49007/udp \
+    -p 6006:6006 \
     --gpus all \
     --name isaac_sim_rl \
     isaac-sim-rl:2020.2.2_ea
 ```
-
-#### Finish setup
-
-In the container:
-
-- Edit `experiences/isaac-sim-python.json` to set correct nucleus server
-- Use `source setenv.sh` to setup environment variables.
-
-#### Quick fix for `--allow-root` bug
-
-In the container, the default user is root, and calling Omniverse Sim with root user requires `--allow-root` flag. In the current build, the function to add is flag is missing.
-
-For a quick fix, edit file `/isaac-sim/_build/linux-x86_64/release/exts/omni.isaac.synthetic_utils/omni/isaac/synthetic_utils/scripts/omnikit.py`. In line 126, function `_start_app`, append the `args` variable with `'--allow-root'`
 
 #### Test the python environment
 
